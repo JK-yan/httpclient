@@ -1,0 +1,302 @@
+Index: src/main/java/com/httpclient/util/SendHttpPost.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/httpclient/util/SendHttpPost.java	(date 1470738083000)
++++ src/main/java/com/httpclient/util/SendHttpPost.java	(revision )
+@@ -1,6 +1,7 @@
+ package com.httpclient.util;
+ 
+ import org.apache.http.client.methods.HttpPost;
++import org.apache.http.client.methods.HttpUriRequest;
+ import org.apache.http.entity.StringEntity;
+ 
+ /**
+@@ -15,11 +16,11 @@
+      * @param httpUrl 地址
+      */
+ 
+-    public String sendHttpPost(String httpUrl){
++    public HttpUriRequest sendHttpPost(String httpUrl){
+ 
+         HttpPost httpPost = new HttpPost(httpUrl);
+         // 创建httpPost
+-        return sendHttpPost(httpPost);
++        return sendHttpPost(httpUrl);
+     }
+ 
+ 
+@@ -30,7 +31,7 @@
+      * * @param httpUrl 地址
+      * * @param params 参数(格式:key1=value1&key2=value2)
+      * */
+-    public String sendHttpPost(String httpUrl, String params) {
++    public HttpUriRequest sendHttpPost(String httpUrl, String params) {
+         HttpPost httpPost = new HttpPost(httpUrl);
+         // 创建httpPost
+         try {
+@@ -41,7 +42,7 @@
+         } catch (Exception e) {
+             e.printStackTrace();
+         }
+-        return sendHttpPost(httpPost);
++        return sendHttpPost(httpUrl);
+     }
+ 
+ 
+Index: src/test/java/postruquest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/test/java/postruquest.java	(revision )
++++ src/test/java/postruquest.java	(revision )
+@@ -0,0 +1,42 @@
++import com.httpclient.util.SendHttpPost;
++import org.apache.http.HttpEntity;
++import org.apache.http.util.EntityUtils;
++import org.junit.Test;
++
++import java.io.IOException;
++
++/**
++ * Created by Administrator on 2016/8/10.
++ */
++public class postruquest extends TestBase {
++    @Test
++    public void ss(){
++        getTemplateTest().process(new TestCallBack() {
++            HttpEntity entity;
++            String responseContent;
++            @Override
++            public void beforeTest() {
++                SendHttpPost post = new SendHttpPost();
++                HttpEntity entity =post.sendHttpMethod(post.sendHttpPost("https://testerhome.com/")).getEntity();
++            }
++
++            @Override
++            public void doest() {
++                try {
++                     responseContent = EntityUtils.toString(entity, "UTF-8");
++                } catch (IOException e) {
++                    e.printStackTrace();
++                }finally {
++                    System.out.println(responseContent);
++
++                }
++            }
++
++            @Override
++            public void afterTest() {
++
++            }
++        });
++    }
++
++}
+Index: src/test/java/TestCallBack.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/test/java/TestCallBack.java	(revision )
++++ src/test/java/TestCallBack.java	(revision )
+@@ -0,0 +1,10 @@
++/**
++ * Created by Administrator on 2016/8/10.
++ */
++public interface TestCallBack
++{
++    public void beforeTest();
++    public void doest();
++    public void afterTest();
++
++}
+Index: src/main/java/com/httpclient/util/qw.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/httpclient/util/qw.java	(date 1470738083000)
++++ src/main/java/com/httpclient/util/qw.java	(revision )
+@@ -1,33 +1,39 @@
+ package com.httpclient.util;
+ 
+-import org.apache.http.client.methods.CloseableHttpResponse;
+-import org.apache.http.client.methods.HttpPost;
++import org.apache.http.HttpEntity;
++import org.apache.http.client.methods.HttpUriRequest;
++import org.apache.http.impl.client.CloseableHttpClient;
++import org.apache.http.util.EntityUtils;
+ 
++import java.io.IOException;
++
+ /**
+  * Created by Administrator on 2016/8/9.
+  */
+ public class qw extends SendHttpPost {
+-    CloseableHttpResponse aa;
+-    HttpBase post =  new SendHttpPost();
+ 
+-    public String dos(){
++    @Override
++    public CloseableHttpClient sendHttpMethod(HttpUriRequest method) {
++        HttpEntity entity = null;
++        String responseContent = null;
++       // entity=this.sendHttpMethod(this.sendHttpPost(""));
++       // this.sendHttpMethod();
++       // entity=super.sendHttpMethod(this.sendHttpPost("https://testerhome.com/"));
+ 
+-       return super.sendHttpPost("sasads");
++        try {
++            responseContent = EntityUtils.toString(entity, "UTF-8");
++        } catch (IOException e) {
++            e.printStackTrace();
++        }finally {
++            System.out.println(responseContent);
++        }
+ 
+ 
+-    }
+ 
+-    @Override
+-    public String sendHttpPost(String httpUrl) {
+-        return super.sendHttpPost(super.sendHttpPost("sasads"));
+     }
++    public static void main(String[] args){
++        new qw();
+ 
+-    @Override
+-    public CloseableHttpResponse sendHttpPost(HttpPost httpPost) {
+-        this.sendHttpPost(dos());
+ 
+-
+-
+-        return super.sendHttpPost(this.sendHttpPost());
+     }
+ }
+Index: src/test/java/TestBase.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/test/java/TestBase.java	(revision )
++++ src/test/java/TestBase.java	(revision )
+@@ -0,0 +1,13 @@
++/**
++ * Created by Administrator on 2016/8/10.
++ */
++public class TestBase {
++    private static TestTemplate templateTest = new TestTemplate();
++    public static TestTemplate getTemplateTest(){
++
++        return templateTest;
++    }
++
++
++
++}
+Index: src/test/java/TestTemplate.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/test/java/TestTemplate.java	(revision )
++++ src/test/java/TestTemplate.java	(revision )
+@@ -0,0 +1,19 @@
++/**
++ * Created by Administrator on 2016/8/10.
++ */
++public class TestTemplate {
++    public void process(TestCallBack callBack){
++        try{
++            callBack.beforeTest();
++
++            callBack.doest();
++
++
++        }catch(Exception e){
++            e.printStackTrace();
++        }
++        finally{
++            callBack.afterTest();
++        }
++    }
++}
+Index: src/main/java/com/httpclient/util/HttpClientTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/httpclient/util/HttpClientTest.java	(date 1470738083000)
++++ src/main/java/com/httpclient/util/HttpClientTest.java	(revision )
+@@ -21,9 +21,10 @@
+         }
+         return instance;
+     }*/
+-    String aa;
+-    TRequest<SendHttpPost> request;
+-    public void ss(){
+-        request.sendHttpPost();
++    SendHttpPost post ;
++
++    public SendHttpPost getPost() {
++        post.sendHttpMethod(post.sendHttpPost("sad"));
++        return post;
+     }
+ }
+Index: src/main/java/com/httpclient/util/HttpBase.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/httpclient/util/HttpBase.java	(date 1470738083000)
++++ src/main/java/com/httpclient/util/HttpBase.java	(revision )
+@@ -1,8 +1,6 @@
+ package com.httpclient.util;
+ 
+-import org.apache.http.client.config.RequestConfig;
+ import org.apache.http.client.methods.CloseableHttpResponse;
+-import org.apache.http.client.methods.HttpPost;
+ import org.apache.http.client.methods.HttpUriRequest;
+ import org.apache.http.impl.client.CloseableHttpClient;
+ import org.apache.http.impl.client.HttpClients;
+@@ -13,26 +11,27 @@
+  * Created by Administrator on 2016/8/9.
+  */
+ public class HttpBase  {
+-    private RequestConfig requestConfig = RequestConfig.custom()
++   /* private RequestConfig requestConfig = RequestConfig.custom()
+             .setSocketTimeout(15000)
+             .setConnectTimeout(15000)
+             .setConnectionRequestTimeout(15000)
+-            .build();
+-public CloseableHttpResponse sendHttpPost(HttpUriRequest httpPost){
++            .build();*/
++public CloseableHttpClient sendHttpMethod(HttpUriRequest method){
+ 
+-    CloseableHttpClient httpClient = null;
++    CloseableHttpClient httpClient = HttpClients.createDefault();
+     CloseableHttpResponse response = null;
+-    httpClient = HttpClients.createDefault();
+-    httpPost.setConfig(requestConfig);
++
++
+     // 执行请求
+     try {
+-        response = httpClient.execute(httpPost);
++        response = httpClient.execute(method);
+     } catch (IOException e) {
+         e.printStackTrace();
+-    }finally {
+-        return response;
+     }
++       // return response;
++
++    return null;
+-    }
++}
+ 
+ 
+ /*    HttpEntity entity = null;
